@@ -1,0 +1,42 @@
+JDBC 이클립스 세팅
+
+@ 새롭게 세팅하는 이유
+1. 이클립스에서 현재 셋팅된 인코딩박식과 오라클 DB에 저장되는 데이터 인코딩 방식이 다르다.
+2. 새로운 워크스페이스를 만들어야 이전 워크스페이스에서 작업했던 코드가 깨지지 않는다.
+  즉, 기존 워크스페이스와 인코딩 방식이 다르다.
+
+
+@ Setting (한번에 6개 맞출거임 (이후 과정의 세팅까지))
+1. 새로운 워크스페이스로 이클립스 연다.
+2. 우측 상단 환경 선택 (Java)
+3. 상단 메뉴 Window -> Show View -> Navigator와 Project Explorer
+4. 상단 메뉴 Window -> Preferences -> General -> Workspace -> Text file encoding에서 Other선택 후 UTF-8로 변경
+5. 상단 메뉴 Window -> Preferences -> General -> Editor -> Text Editors -> Spelling 에서 Other선택 후 UTF-8로 변경
+6. 상단 메뉴 Window -> Preferences -> JSON -> JSON Files 의 Encoding방식 ISO 10646/Unicode(UTF-8) 로 변경 
+7. 상단 메뉴 Window -> Preferences -> Web -> CSS Files의 Encoding 방식 ISO 10646/Unicode(UTF-8) 로 변경
+8. 상단 메뉴 Window -> Preferences -> Web -> HTML Files의 Encoding 방식 ISO 10646/Unicode(UTF-8) 로 변경
+9. 상단 메뉴 Window -> Preferences -> Web -> JSP Files의 Encoding 방식 ISO 10646/Unicode(UTF-8) 로 변경
+
+@ OJDBC Setting
+1. 오라클이 설치된 경로를 찾아간다. (oraclexe 폴더) 
+2. C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib 안의 ojdbc6.jdbc복사
+3. 복사한 파일을 jdk 폴더의 lib에 넣음 (C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext)
+
+## 오라클 버전별 라이브러리 이름
+- oracle 7 : classes111.zip / oracle 8 : classes12.zip
+- oracle 9 : ojdbc14.jar / oracle 10g : ojdbc14.jar
+- oracle 11g : ojdbc6.jar    (우리가 쓰고 있는 것)
+
+@ Library 경로 Setting
+1. 이클립스 Package Explorer의 프로젝트 우클릭 Properties의 Java Build Path의 상단에 Libraries선택
+2. JRE System Libarary [JavaSE-1.8] 선택 후 Add External JARs 클릭
+3. 위에 ojdbc6.jar 붙여넣은 경로 찾아가서 ojdbc6.jar 선택 후 열기
+
+@ DB Setting (연습용!!!)
+1. 계정 생성 (member / 1234) -> 각 프로젝트마다 계정 만드는 것 추천
+-> CREATE USER member IDENTIFIED BY 1234;
+2. 권한 부여
+-> GRANT RESOURCE, CONNECT TO member;
+3. 접속
+-> 접속이름:web_member /  계정비번
+4. 배포한 sql 스크립트 실행

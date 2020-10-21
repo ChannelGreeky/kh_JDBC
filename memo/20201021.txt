@@ -1,0 +1,89 @@
+@ JDBC 란?
+-> Java DataBase Connectivity의 약자
+-> 자바 언어에서 DataBase에 접근할 수 있게 해주는 Programming API
+-> Java에서 DBMS 연동에 필요한 메소드인 Connection 인터페이스를 제공
+-> 각 DBMS 벤더(vendor) 별 구현하며 (jar 파일) DBMS에 접속 가능하게 함
+-> java.sql 패키지에서 관리
+
+@ 필요 라이브러리
+-> OJDBC
+※ OJDBC 라이브러리는 오라클에서 제공하는 오라클 DB와 자바가 연결되기 위한 드라이버를 제공하는 라이브러리
+-> OJDBC는 어디서 구할수 있는지?
+	- 오라클 공식 홈페이지에서 구할 수 있음
+	- 오라클이 설치된 컴퓨터에서 구할 수 있음
+	1. 오라클이 설치된 경로를 찾아간다. (oraclexe 폴더) 
+	2. C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib 안의 ojdbc6.jdbc복사
+	3. 복사한 파일을 jdk 폴더의 lib에 넣음 (C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext)
+
+##오라클 버전별 라이브러리 이름
+- oracle 7 : classes111.zip / oracle 8 : classes12.zip
+- oracle 9 : ojdbc14.jar / oracle 10g : ojdbc14.jar
+- oracle 11g : ojdbc6.jar    (우리가 쓰고 있는 것)
+
+@ JDBC 코딩 절차
+1. Driver 등록
+	- 이클립스에서 DBMS와 연동하기 위해서는 첫번째로 Driver등록을 해야한다.
+	- 우리가 가져온 ojdbc6 안에 있는 드라이브를 등록하고 사용함
+2. DBMS와 연결
+3. Statement 객체 생성 - 연동된 DBMS에 쿼리를 전송하는 객체
+	- Statement 방식
+	- PreparedStatement 방식
+4. SQL 전송
+	- 수행할 SQL을 DBMS로 전송
+5. 결과 받기
+	- 처리 결과를 DBMS로 부터 받아옴
+6. 닫기 - close처리
+
+@ MVC 패턴
+-> MVC는 애플리케이션이 동작하기 위한 비즈니스 로직을 3개의 구조로 나누어 개발한 패턴
+-> Model, Vidw, Controller의 약자
+-> 유연성과 확장성을 고려한 개발을 하기 위해 사용
+
+## Model
+-> 데이터를 처리하기 위한 로직을 구성
+-> DBMS와 상호작용 하거나 DATA를 가공처리 하는 역할
+
+## View
+-> 사용자로부터 입력 받고, 화면을 보여주기(UI) 위한 역할
+
+## Controller
+-> 사용자가 요청한 것을 어떻게 처리할지를 결정하는 역할
+-> View와 Model 사이에서 동작
+-> Controller는 사용자가 요청한 것을 어떤 Model과 연결할 지를 결정
+
+※ 읽는 순서는 MVC라고 읽지만 동작 순서는 View -> Contoller -> Model
+
+
+
+## Connection ##
+-> Connection 객체는 특정 데이터 원본과 연결된 커넥션을 나타냄
+-> Statement 객체를 생성할 때에도 Connection 객체를 이용하여 만듦
+(createStatement() 메소드를 이용하여 호출)
+-> 추후 JDBC에서 DBMS와의 연동 스트림을 가지고 있음
+
+## Statement ##
+-> Connection 객체에 의해 프로그램에 리턴되는 객체
+-> Connection Class의 createStatement() 메소드를 호출하여 얻어지며,
+생성된 Statement 객체로 질의문장을 String 객체에 담아 인자로 전달하여
+excuteQuery() 메소드를 이용하여 DBMS에서 SQL을 실행 함
+
+
+## ResultSet ##
+-> SELECT 문을 사용한 질의 성공시 ResultSet을 반환 
+-> ResultSEt은 SQL 질의에 의해 출력된 정보 테이블을 담고 있으며,
+'커서(cursor)' 라는 것을 가지고 특정 행에 대한 참조를 제어할 수 있음
+
+
+## DriverManager ##
+-> 데이터 원본에 JDBC 드라이버를 통하여 Connection을 만드는 역할을 함
+-> Class.forName() 메소드를 통해 생성되며, 반드시 예외처리를 해야 함
+-> 직접 객체 생성이 불가능하고, getConnection() 메소드를 사용하여
+객체를 생성할 수 있음
+
+
+## PreparedStatement ##
+-> Connection 객체의 preparedStatement() 메소드를 사용하여 객체를 생성 함
+-> SQL 문장이 미리 컴파일 되고, 실행시간 동안 인수 값을 위한 공간을 확보
+할 수 있다는 점에서 Statement 방식과는 다름
+-> 각 각의 인수에 대해 위치 홀더(? 라는)를 사용하여
+SQL 문장을 정의할 수 있게 해줌
