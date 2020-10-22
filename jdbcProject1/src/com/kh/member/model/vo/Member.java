@@ -3,8 +3,6 @@ package com.kh.member.model.vo;
 import java.sql.Date;
 
 public class Member {
-//MEMBER_ID / MEMBER_PWD / MEMBER_NAME / GENDER / AGE / EMAIL 
-// PHONE / ADDRESS / HOBBY / ENROLL_DATE
 	private String memberId;
 	private String memberPwd;
 	private String memberName;
@@ -15,6 +13,33 @@ public class Member {
 	private String address;
 	private String hobby;
 	private Date enrollDate;
+	
+	public Member() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	public Member(String memberId, String memberPwd, String memberName, char gender, int age, String email,
+			String phone, String address, String hobby, Date enrollDate) {
+		super();
+		this.memberId = memberId;
+		this.memberPwd = memberPwd;
+		this.memberName = memberName;
+		this.gender = gender;
+		this.age = age;
+		this.email = email;
+		this.phone = phone;
+		this.address = address;
+		this.hobby = hobby;
+		this.enrollDate = enrollDate;
+	}
+	@Override
+	public String toString() {
+		return memberId + "/" + memberPwd + "/" + memberName + "/"
+				+ gender + "/" + age + "/" + email + "/" + phone + "/" + address
+				+ "/" + hobby + "/" + enrollDate;
+	}
+
 	public String getMemberId() {
 		return memberId;
 	}
@@ -75,30 +100,4 @@ public class Member {
 	public void setEnrollDate(Date enrollDate) {
 		this.enrollDate = enrollDate;
 	}
-	public Member() {
-		super();
-	}
-	public Member(String memberId, String memberPwd, String memberName, char gender, int age, String email,
-			String phone, String address, String hobby, Date enrollDate) {
-		super();
-		this.memberId = memberId;
-		this.memberPwd = memberPwd;
-		this.memberName = memberName;
-		this.gender = gender;
-		this.age = age;
-		this.email = email;
-		this.phone = phone;
-		this.address = address;
-		this.hobby = hobby;
-		this.enrollDate = enrollDate;
-	}
-	@Override
-	public String toString() {
-		return memberId + "/" + memberPwd + "/" + memberName + "/"
-				+ gender + "/" + age + "/" + email + "/" + phone + "/" + address
-				+ "/" + hobby + "/" + enrollDate;
-	}
-	
-	
-
 }

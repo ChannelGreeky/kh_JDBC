@@ -6,37 +6,64 @@ import com.kh.member.model.dao.MemberDAO;
 import com.kh.member.model.vo.Member;
 
 public class MemberController {
-	private MemberDAO mDAO = new MemberDAO();
-	
-	// 회원 정보 전체 조회
+	MemberDAO mDAO = new MemberDAO();
+
 	public ArrayList<Member> selectAll() {
-		ArrayList<Member> list = mDAO.selectAll(); //Controller에서 DAO를 호출
+		// TODO Auto-generated method stub
+		ArrayList<Member> list = mDAO.selectAll();
+
 		return list;
 	}
 
-	// 회원 아이디로 조회
-	public void selectOneId() {
-
+	public Member selectOneId(String selectId) {
+		// TODO Auto-generated method stub
+		Member m = mDAO.selectOneId(selectId);
+		return m;
 	}
 
-	// 회원 이름으로 조회
-	public void selectName() {
+	public ArrayList<Member> selectName(String selectName) {
+		// TODO Auto-generated method stub
+		// ArrayList<Member> list = mDAO.selectName(selectName);
 
+		return mDAO.selectName(selectName);
 	}
 
-	// 회원 가입
-	public void insertMemeber() {
-
+	public boolean insertMember(Member m) {
+		// TODO Auto-generated method stub
+		if (m.getGender() == '남') {
+			m.setGender('M');
+		} else {
+			m.setGender('F');
+		}
+		int result = mDAO.insertMember(m);
+		if (result > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	// 회원 정보 변경
-	public void updateMember() {
-
+	public boolean updateMember(Member m) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		
+		if (m.getGender() == '남') {
+			m.setGender('M');
+		} else {
+			m.setGender('F');
+		}
+		
+		result = mDAO.updateMember(m);
+		
+		if (result > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	// 회원 삭제
-	public void deleteMember() {
-
+	public boolean deleteMember(Member m) {
+		// TODO Auto-generated method stub
+		return mDAO.deleteMember(m);
 	}
-
 }
