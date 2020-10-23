@@ -13,22 +13,25 @@ import com.kh.member.model.vo.Member;
 public class MemberDAO {
 	Connection conn = null;
 	Statement stmt = null;
-	ResultSet rset = null;
 	PreparedStatement pstmt = null;
+	ResultSet rset = null;
 	public ArrayList<Member> selectAll() {
 		// TODO Auto-generated method stub
 		ArrayList<Member> list = new ArrayList<Member>();
+		
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member", "1234");
-
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","member","1234");
+			
 			stmt = conn.createStatement();
-
-			String query = "SELECT * FROM MEMBER";
-
+			
+			String query = "SELECT * FROM MEMBER WHERE DROP_YN IN ('N')";
+			
 			rset = stmt.executeQuery(query);
-			while (rset.next()) {
+			
+			while(rset.next()) {
 				Member m = new Member();
+				
 				m.setMemberId(rset.getString("MEMBER_ID"));
 				m.setMemberPwd(rset.getString("MEMBER_PWD"));
 				m.setMemberName(rset.getString("MEMBER_NAME"));
@@ -39,7 +42,7 @@ public class MemberDAO {
 				m.setAddress(rset.getString("ADDRESS"));
 				m.setHobby(rset.getString("HOBBY"));
 				m.setEnrollDate(rset.getDate("ENROLL_DATE"));
-
+				
 				list.add(m);
 			}
 		} catch (ClassNotFoundException e) {
@@ -58,28 +61,24 @@ public class MemberDAO {
 				e.printStackTrace();
 			}
 		}
-
+				
 		return list;
-
 	}
-
 	public Member selectOneId(String selectId) {
 		// TODO Auto-generated method stub
+		
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member", "1234");
-
-			String query = "SELECT * FROM MEMBER WHERE MEMBER_ID = ?";
-
-			pstmt = conn.prepareStatement(query);
-			//Statement 방식은 만들고 나서 excuteQuery 또는 excuteUpdate를 통해 쿼리를 보내지만
-			//PreparedStatement는 만들 때 Query를 넣고 만듬
 			
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member", "1234");
+			
+			String query = "SELECT * FROM MEMBER WHERE (MEMBER_ID = ?) AND (DROP_YN IN ('N'))";
+			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, selectId);
 			
 			rset = pstmt.executeQuery();
 			
-			if (rset.next()) {
+			if(rset.next()) {
 				Member m = new Member();
 				m.setMemberId(rset.getString("MEMBER_ID"));
 				m.setMemberPwd(rset.getString("MEMBER_PWD"));
@@ -96,6 +95,7 @@ public class MemberDAO {
 			} else {
 				return null;
 			}
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,22 +114,24 @@ public class MemberDAO {
 		}
 		return null;
 	}
-
+	
 	public ArrayList<Member> selectName(String selectName) {
-		ArrayList<Member> selectList = new ArrayList<Member>();
 		// TODO Auto-generated method stub
+		ArrayList<Member> list = new ArrayList<Member>();
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member", "1234");
-
-			String query = "SELECT * FROM MEMBER WHERE MEMBER_NAME LIKE ?";
+			
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member","1234");
+			
+			String query = "SELECT * FROM MEMBER WHERE (MEMBER_NAME LIKE ?) AND (DROP_YN IN ('N'))";
 			
 			pstmt = conn.prepareStatement(query);
-			
 			pstmt.setString(1, selectName);
 			rset = pstmt.executeQuery();
+			
 			while(rset.next()) {
 				Member m = new Member();
+				
 				m.setMemberId(rset.getString("MEMBER_ID"));
 				m.setMemberPwd(rset.getString("MEMBER_PWD"));
 				m.setMemberName(rset.getString("MEMBER_NAME"));
@@ -141,8 +143,9 @@ public class MemberDAO {
 				m.setHobby(rset.getString("HOBBY"));
 				m.setEnrollDate(rset.getDate("ENROLL_DATE"));
 				
-				selectList.add(m);
+				list.add(m);
 			}
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -159,94 +162,95 @@ public class MemberDAO {
 				e.printStackTrace();
 			}
 		}
-		return selectList;
+		
+		
+		return list;
 	}
-
 	public int insertMember(Member m) {
 		// TODO Auto-generated method stub
 		int result = 0;
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member", "1234");
-
-			String query = "INSERT INTO MEMBER VALUES(?,?,?,?,?,?,?,?,?,DEFAULT)";
 			
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","member","1234");
+			
+			String query = "INSERT INTO MEMBER VALUES (?,?,?,?,?,?,?,?,?,DEFAULT,'N')";
+			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(query);
-
+			
 			pstmt.setString(1, m.getMemberId());
 			pstmt.setString(2, m.getMemberPwd());
 			pstmt.setString(3, m.getMemberName());
-			pstmt.setString(4, m.getMemberId());
-			pstmt.setString(5, String.valueOf(m.getGender()));
-			pstmt.setInt(6, m.getAge());
-			pstmt.setString(7, m.getEmail());
+			pstmt.setString(4, String.valueOf(m.getGender()));
+			pstmt.setInt(5, m.getAge());
+			pstmt.setString(6, m.getEmail());
+			pstmt.setString(7, m.getPhone());
 			pstmt.setString(8, m.getAddress());
 			pstmt.setString(9, m.getHobby());
 			
-			//트랜잭션 흐름제어를 위해 자동커밋 진행을 해제
-			conn.setAutoCommit(false);
-			//excuteQuery 메소드는 출력전용 메소드(SELECT)
-			//실행시 출력된 결과 (ResultSet)를 리턴
-			
-			//insert, update, delete는 출력 전용 메소드인 excuteQuery로 실행 X
-			//excuteUpdate 메소드를 이용하여 데이터의 삽입, 수정, 삭제를 수행
-			//excuteUpdate 메소드는 처리된 행의 개수를 리턴 (ex 1행 데이터 삭제시 1 반환)
-			//(실패시 0 반환)
 			result = pstmt.executeUpdate();
-			
-			if(result > 0) {
-				conn.commit(); // 성공적으로 마쳤으면 커밋
-			} else {
-				conn.rollback(); // 성공적으로 마쳤으면 롤백
-			}
-
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	public int updateMember(Member m) {
-		// TODO Auto-generated method stub
-		int result=0;
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member", "1234");
-
-			stmt = conn.createStatement();
-			
-			String query = "UPDATE MEMBER SET "
-							+ "MEMBER_PWD = '"+m.getMemberPwd()+"',"
-							+ "MEMBER_NAME = '"+m.getMemberName()+"',"
-							+ "GENDER = '"+m.getGender()+"',"
-							+ "AGE = '"+m.getAge()+"',"
-							+ "EMAIL = '"+m.getEmail()+"',"
-							+ "PHONE = '"+m.getPhone()+"',"
-							+ "ADDRESS = '"+m.getAddress()+"',"
-							+ "HOBBY = '"+m.getHobby()+"'"
-							+ " WHERE MEMBER_ID = '"+m.getMemberId()+"'";;
-
-			conn.setAutoCommit(false);
-			
-			result = stmt.executeUpdate(query);
 			
 			if(result > 0) {
 				conn.commit();
 			} else {
 				conn.rollback();
 			}
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+				pstmt.close();
+				rset.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			
+		return result;
+	}
+	public int updateMember(Member m) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member" , "1234");
+			
+			String query = "UPDATE MEMBER SET "
+					+ "MEMBER_PWD = ?,"
+					+ "MEMBER_NAME = ?,"
+					+ "GENDER = ?,"
+					+ "AGE = ?,"
+					+ "EMAIL = ?,"
+					+ "PHONE = ?,"
+					+ "ADDRESS = ?,"
+					+ "HOBBY = ?"
+					+ " WHERE MEMBER_ID = ?";
+			
+			conn.setAutoCommit(false);
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setString(1, m.getMemberPwd());
+			pstmt.setString(2, m.getMemberName());
+			pstmt.setString(3, String.valueOf(m.getGender()));
+			pstmt.setInt(4, m.getAge());
+			pstmt.setString(5, m.getEmail());
+			pstmt.setString(6, m.getPhone());
+			pstmt.setString(7, m.getAddress());
+			pstmt.setString(8, m.getHobby());
+			pstmt.setString(9, m.getMemberId());
+		
+			result = pstmt.executeUpdate();
+			
+			if(result > 0) {
+				conn.commit();
+			} else {
+				conn.rollback();
+			}
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -256,47 +260,59 @@ public class MemberDAO {
 		} finally {
 			try {
 				conn.close();
-				stmt.close();
+				pstmt.close();
+				rset.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		
 		return result;
 	}
-
-	public boolean deleteMember(Member m) {
+	public int deleteMember(Member m) {
 		// TODO Auto-generated method stub
-		int deleteResult = 0;
-		int insertResult = 0;
-		boolean result = false;
+		int result = 0;
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member", "1234");
-			stmt = conn.createStatement();
-			String insertQuery = "INSERT INTO DELETE_MEMBER ("
-							+ "SELECT MEMBER_ID, MEMBER_NAME, GENDER, PHONE, ENROLL_DATE, SYSDATE "
-							+ "WHERE MEMBER_ID = '"+m.getMemberId()+"')";			
-			String deleteQuery = "DELETE FROM MEMBER WHERE MEMBER_ID = '"+ m.getMemberId()+"'";
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "member" , "1234");
 			
-			conn.setAutoCommit(false); 
-			insertResult = stmt.executeUpdate(insertQuery);
-			deleteResult = stmt.executeUpdate(deleteQuery);
+			String query = "UPDATE MEMBER SET "
+					+ "DROP_YN = 'Y'"
+					+ " WHERE MEMBER_ID = ?";
 			
-			if(insertResult > 0 && deleteResult > 0) {
-				conn.commit(); // 성공적으로 마쳤으면 커밋
-				result = true;
+			conn.setAutoCommit(false);
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setString(1, m.getMemberId());
+		
+			result = pstmt.executeUpdate();
+			
+			if(result > 0) {
+				conn.commit();
 			} else {
-				conn.rollback(); // 성공적으로 마쳤으면 롤백
-				result = false;
+				conn.rollback();
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+				pstmt.close();
+				rset.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
 		return result;
 	}
+
 }

@@ -2,30 +2,32 @@ package com.kh.member.controller;
 
 import java.util.ArrayList;
 
-import com.kh.member.model.dao.MemberDAO;
+import com.kh.member.model.service.MemberService;
 import com.kh.member.model.vo.Member;
 
 public class MemberController {
-	MemberDAO mDAO = new MemberDAO();
+	private MemberService mService = new MemberService();
 
 	public ArrayList<Member> selectAll() {
 		// TODO Auto-generated method stub
-		ArrayList<Member> list = mDAO.selectAll();
-
+		ArrayList<Member> list= mService.selectAll();
+		
 		return list;
 	}
 
 	public Member selectOneId(String selectId) {
 		// TODO Auto-generated method stub
-		Member m = mDAO.selectOneId(selectId);
+		Member m = mService.selectOneId(selectId);
+		
 		return m;
 	}
 
 	public ArrayList<Member> selectName(String selectName) {
 		// TODO Auto-generated method stub
-		// ArrayList<Member> list = mDAO.selectName(selectName);
 		selectName = "%" + selectName + "%";
-		return mDAO.selectName(selectName);
+		ArrayList<Member> list = mService.selectName(selectName);
+		
+		return list;
 	}
 
 	public boolean insertMember(Member m) {
@@ -35,7 +37,7 @@ public class MemberController {
 		} else {
 			m.setGender('F');
 		}
-		int result = mDAO.insertMember(m);
+		int result = mService.insertMember(m);
 		if (result > 0) {
 			return true;
 		} else {
@@ -53,7 +55,7 @@ public class MemberController {
 			m.setGender('F');
 		}
 		
-		result = mDAO.updateMember(m);
+		result = mService.updateMember(m);
 		
 		if (result > 0) {
 			return true;
@@ -64,6 +66,13 @@ public class MemberController {
 
 	public boolean deleteMember(Member m) {
 		// TODO Auto-generated method stub
-		return mDAO.deleteMember(m);
+		int result = mService.deleteMember(m);
+		
+		if(result > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
+
 }

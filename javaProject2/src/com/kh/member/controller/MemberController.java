@@ -11,21 +11,27 @@ public class MemberController {
 	public ArrayList<Member> selectAll() {
 		// TODO Auto-generated method stub
 		ArrayList<Member> list = mDAO.selectAll();
-
 		return list;
 	}
 
 	public Member selectOneId(String selectId) {
 		// TODO Auto-generated method stub
 		Member m = mDAO.selectOneId(selectId);
-		return m;
+
+		if (m == null) {
+			return null;
+		} else {
+			return m;
+		}
 	}
 
 	public ArrayList<Member> selectName(String selectName) {
 		// TODO Auto-generated method stub
-		// ArrayList<Member> list = mDAO.selectName(selectName);
 		selectName = "%" + selectName + "%";
-		return mDAO.selectName(selectName);
+
+		ArrayList<Member> list = mDAO.selectName(selectName);
+
+		return list;
 	}
 
 	public boolean insertMember(Member m) {
@@ -36,6 +42,7 @@ public class MemberController {
 			m.setGender('F');
 		}
 		int result = mDAO.insertMember(m);
+
 		if (result > 0) {
 			return true;
 		} else {
@@ -45,7 +52,6 @@ public class MemberController {
 
 	public boolean updateMember(Member m) {
 		// TODO Auto-generated method stub
-		int result = 0;
 		
 		if (m.getGender() == '남') {
 			m.setGender('M');
@@ -53,8 +59,8 @@ public class MemberController {
 			m.setGender('F');
 		}
 		
-		result = mDAO.updateMember(m);
-		
+		int result = mDAO.updateMember(m);
+
 		if (result > 0) {
 			return true;
 		} else {
@@ -64,6 +70,13 @@ public class MemberController {
 
 	public boolean deleteMember(Member m) {
 		// TODO Auto-generated method stub
-		return mDAO.deleteMember(m);
+		int result = mDAO.deleteMember(m);
+		
+		if(result > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
+
 }

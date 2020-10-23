@@ -13,7 +13,7 @@ public class MemberView {
 	public void start() {
 
 		while (true) {
-			System.out.println("===== 회원 관리 프로그램 =====");
+			System.out.println("===== 회원 관리 프로그램 ver2.0 =====");
 			System.out.println("1.회원 정보 전체 조회");
 			System.out.println("2.회원 아이디로 조회");
 			System.out.println("3.회원 이름으로 조회");

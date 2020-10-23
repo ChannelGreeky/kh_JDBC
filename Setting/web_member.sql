@@ -7,5 +7,10 @@ constraint ID_PRI primary key(member_id);
 
 alter table delete_member add(END_DATE DATE);
 
+ALTER TABLE MEMBER ADD DROP_YN CHAR(1);
+
+UPDATE MEMBER SET DROP_YN = 'N';
+
 commit;
 
+SELECT * FROM MEMBER;
