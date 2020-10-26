@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import com.kh.common.JDBCTemplate;
 import com.kh.member.model.vo.Member;
 
 public class MemberDAO {
@@ -22,7 +23,7 @@ public class MemberDAO {
 		try {
 			stmt = conn.createStatement();
 
-			String query = "SELECT * FROM MEMBER WHERE DROP_YN = 'N";
+			String query = "SELECT * FROM MEMBER WHERE DROP_YN = 'N'";
 
 			rset = stmt.executeQuery(query);
 
@@ -75,7 +76,7 @@ public class MemberDAO {
 			
 			rset = pstmt.executeQuery();
 			
-			if(rset != null) {
+			if(rset.next()) {
 				m.setMemberId(rset.getString("MEMBER_ID"));
 				m.setMemberPwd(rset.getString("MEMBER_PWD"));
 				m.setMemberName(rset.getString("MEMBER_NAME"));
@@ -107,7 +108,7 @@ public class MemberDAO {
 		ArrayList<Member> list = new ArrayList<Member>();
 
 		try {
-			String query = "SELECT * FROM MEMBER WHERE MEMEBER_NAME LIKE ?";
+			String query = "SELECT * FROM MEMBER WHERE MEMBER_NAME LIKE ?";
 			
 			pstmt = conn.prepareStatement(query);
 
@@ -136,13 +137,16 @@ public class MemberDAO {
 			e.printStackTrace();
 		} finally {
 			
-			try {
-				rset.close();
-				pstmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			JDBCTemplate.close(rset);
+			JDBCTemplate.close(pstmt);
+			
+//			try {
+//				rset.close();
+//				pstmt.close();
+//			} catch (SQLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 		
 		return list;
@@ -156,7 +160,7 @@ public class MemberDAO {
 		int result = 0;
 		try {
 			String query = "INSERT INTO MEMBER VALUES (?,?,?,?,?,?,?,?,?,DEFAULT,'N')";
-			conn.setAutoCommit(false);
+
 			pstmt = conn.prepareStatement(query);
 			
 			pstmt.setString(1, m.getMemberId());
@@ -171,11 +175,6 @@ public class MemberDAO {
 			
 			result = pstmt.executeUpdate();
 			
-			if(result > 0) {
-				conn.commit();
-			} else {
-				conn.rollback();
-			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -208,8 +207,6 @@ public class MemberDAO {
 					+ "HOBBY = ?"
 					+ " WHERE MEMBER_ID = ?";
 			
-			conn.setAutoCommit(false);
-			
 			pstmt = conn.prepareStatement(query);
 			
 			pstmt.setString(1, m.getMemberPwd());
@@ -223,12 +220,6 @@ public class MemberDAO {
 			pstmt.setString(9, m.getMemberId());
 		
 			result = pstmt.executeUpdate();
-			
-			if(result > 0) {
-				conn.commit();
-			} else {
-				conn.rollback();
-			}
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -255,8 +246,6 @@ public class MemberDAO {
 					+ "DROP_YN = 'Y'"
 					+ " WHERE MEMBER_ID = ?";
 			
-			conn.setAutoCommit(false);
-			
 			pstmt = conn.prepareStatement(query);
 			
 			pstmt.setString(1, m.getMemberId());
@@ -273,12 +262,7 @@ public class MemberDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			try {
-				pstmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			JDBCTemplate.close(pstmt);
 		}
 		
 		return result;

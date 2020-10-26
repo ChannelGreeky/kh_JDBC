@@ -13,10 +13,10 @@ public class MemberView {
 	public void start() {
 		int select = 0;
 		while(true) {
-			System.out.println("========회원관리 프로그램 ver2.0========");
+			System.out.println("========회원관리 프로그램 ver10.0========");
 			System.out.println("1. 회원 정보 전체 조회");
 			System.out.println("2. 회원 ID로 조회");
-			System.out.println("3. 회원 이름으로 전체 조회");
+			System.out.println("3. 회원 이름으로 조회");
 			System.out.println("4. 회원 가입");
 			System.out.println("5. 회원 정보 수정");
 			System.out.println("6. 회원 탈퇴");
